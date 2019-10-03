@@ -202,14 +202,34 @@ function generateStates() {
     let generateHTML = "";
 
     for (let i = 0; i < states.length; i++) {
-        generateHTML += `<option value="${states[i].value}">${states[i].name}</option>`;
+        
+        if (i % 5 === 0 && i !== 0) {generateHTML += `<p></p>`;}
+        
+        generateHTML += `<input type="checkbox" name ="${states[i].name}" value="${states[i].value}">${states[i].name}  `;
+
     }
 
     document.querySelector("#states").innerHTML = generateHTML;
 }
 
+function buildStateParams(states) {
+    
+    let stateString = "";
+
+    for (let i = 0; i < states.length; i++) {
+        stateString += `stateCode=${states[i].value}`;
+        if (i !== states.length -1) {stateString += `&`}
+    }
+
+    return stateString;
+}
+
 function fetchParks() {
-    const search = `https://developer.nps.gov/api/v1/parks?stateCode=${document.querySelector("#states").value}&limit=${document.querySelector("#maxResults").value}&api_key=2r69JIlKn56SMXXCfp3koJlIGccMp19fWG0LUnRZ`;
+
+    let stateString = buildStateParams(document.querySelectorAll("input[type='checkbox']:checked"))
+    
+    const search = `https://developer.nps.gov/api/v1/parks?${stateString}&limit=${document.querySelector("#maxResults").value}&api_key=2r69JIlKn56SMXXCfp3koJlIGccMp19fWG0LUnRZ`;
+    
     fetch (search)
     .then (response => response.json())
     .then (response => {
